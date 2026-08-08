@@ -2,8 +2,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getNotesByUser } from "@/lib/notes";
-import { createNoteAction } from "@/lib/actions/notes";
-import { SignOutButton } from "@/components/SignOutButton";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -18,27 +16,18 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="border-b bg-white">
         <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">Notes</h1>
-            <SignOutButton />
-          </div>
+          <h1 className="text-3xl font-bold">Notes</h1>
         </div>
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <form
-            action={createNoteAction}
-            method="POST"
-            className="inline-block"
+          <Link
+            href="/notes/new"
+            className="inline-block rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
           >
-            <button
-              type="submit"
-              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-              New note
-            </button>
-          </form>
+            New note
+          </Link>
         </div>
 
         {notes.length === 0 ? (

@@ -15,11 +15,17 @@ const updateNoteSchema = z.object({
   contentJson: z.string().optional(),
 });
 
-export async function createNoteAction() {
+const createNoteSchema = z.object({
+  title: z.string().min(1).max(500).optional(),
+  contentJson: z.string().optional(),
+});
+
+export async function createNoteWithContentAction(data: unknown) {
   const session = await getSession();
   if (!session || !session.user) throw new Error("Unauthorized");
 
-  const note = await createNote(session.user.id);
+  const validated = createNoteSchema.parse(data);
+  const note = await createNote(session.user.id, validated);
   redirect(`/notes/${note.id}`);
 }
 
