@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tiptap/pm": "^3.29.2",
+    "@tiptap/react": "^3.29.2",
     "@tiptap/starter-kit": "^3.29.2",
     "better-auth": "^1.6.26",
     "nanoid": "^6.0.1",
