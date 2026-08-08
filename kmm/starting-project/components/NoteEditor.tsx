@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import type { JSONContent } from "@tiptap/react";
 import type { Note } from "@/lib/notes";
+import { RichTextEditor } from "@/components/RichTextEditor";
 import {
   updateNoteAction,
   deleteNoteAction,
@@ -17,7 +19,13 @@ interface NoteEditorProps {
 export function NoteEditor({ note }: NoteEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(note.title);
-  const [content, setContent] = useState(note.contentJson);
+  const [content, setContent] = useState<JSONContent>(() => {
+    try {
+      return JSON.parse(note.contentJson);
+    } catch {
+      return { type: "doc", content: [] };
+    }
+  });
   const [isPublic, setIsPublic] = useState(note.isPublic);
   const [saving, setSaving] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -28,7 +36,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateNoteAction(note.id, { title, contentJson: content });
+      await updateNoteAction(note.id, { title, contentJson: JSON.stringify(content) });
       router.refresh();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to save");
@@ -90,13 +98,10 @@ export function NoteEditor({ note }: NoteEditorProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Content (JSON)</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={10}
-              className="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm"
-            />
+            <label className="block text-sm font-medium">Content</label>
+            <div className="mt-2">
+              <RichTextEditor initialContent={content} onChange={setContent} />
+            </div>
           </div>
 
           <div className="flex gap-4">
