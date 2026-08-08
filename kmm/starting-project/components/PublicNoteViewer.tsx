@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import { useEditor, EditorContent, type JSONContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
 interface PublicNoteViewerProps {
   content: JSONContent;
@@ -15,7 +15,7 @@ export function PublicNoteViewer({ content }: PublicNoteViewerProps) {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "prose prose-sm max-w-none focus:outline-none",
+        class: 'prose prose-sm max-w-none focus:outline-none',
       },
     },
   });

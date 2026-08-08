@@ -1,6 +1,6 @@
-import { Database } from "bun:sqlite";
+import { Database } from 'bun:sqlite';
 
-const DATABASE_PATH = process.env.DATABASE_PATH || "./data/app.db";
+const DATABASE_PATH = process.env.DATABASE_PATH || './data/app.db';
 
 let db: Database | null = null;
 let schemaInitialized = false;
@@ -9,8 +9,8 @@ export function getDb(): Database {
   if (db) return db;
 
   db = new Database(DATABASE_PATH);
-  db.exec("PRAGMA journal_mode = WAL");
-  db.exec("PRAGMA foreign_keys = ON");
+  db.exec('PRAGMA journal_mode = WAL');
+  db.exec('PRAGMA foreign_keys = ON');
 
   if (!schemaInitialized) {
     initializeSchema(db);

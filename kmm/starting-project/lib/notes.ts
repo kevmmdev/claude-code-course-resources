@@ -1,5 +1,5 @@
-import { nanoid } from "nanoid";
-import { query, get, run } from "./db";
+import { nanoid } from 'nanoid';
+import { query, get, run } from './db';
 
 export type Note = {
   id: string;
@@ -41,15 +41,15 @@ export async function createNote(
   data: { title?: string; contentJson?: string } = {},
 ): Promise<Note> {
   const id = crypto.randomUUID();
-  const title = data.title || "Untitled note";
-  const contentJson = data.contentJson || JSON.stringify({ type: "doc", content: [] });
+  const title = data.title || 'Untitled note';
+  const contentJson = data.contentJson || JSON.stringify({ type: 'doc', content: [] });
 
   const row = get<NoteRow>(
     `INSERT INTO notes (id, user_id, title, content_json) VALUES (?, ?, ?, ?) RETURNING *`,
     [id, userId, title, contentJson],
   );
 
-  if (!row) throw new Error("Failed to create note");
+  if (!row) throw new Error('Failed to create note');
   return toNote(row);
 }
 
@@ -59,10 +59,9 @@ export async function getNoteById(userId: string, noteId: string): Promise<Note 
 }
 
 export async function getNotesByUser(userId: string): Promise<Note[]> {
-  const rows = query<NoteRow>(
-    `SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC`,
-    [userId],
-  );
+  const rows = query<NoteRow>(`SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC`, [
+    userId,
+  ]);
   return rows.map(toNote);
 }
 
@@ -74,13 +73,13 @@ export async function updateNote(
   const setClauses: string[] = [];
   const params: (string | number | null)[] = [];
 
-  if ("title" in data && data.title !== undefined) {
-    setClauses.push("title = ?");
+  if ('title' in data && data.title !== undefined) {
+    setClauses.push('title = ?');
     params.push(data.title);
   }
 
-  if ("contentJson" in data && data.contentJson !== undefined) {
-    setClauses.push("content_json = ?");
+  if ('contentJson' in data && data.contentJson !== undefined) {
+    setClauses.push('content_json = ?');
     params.push(data.contentJson);
   }
 
@@ -89,7 +88,7 @@ export async function updateNote(
   setClauses.push("updated_at = datetime('now')");
   params.push(noteId, userId);
 
-  const sql = `UPDATE notes SET ${setClauses.join(", ")} WHERE id = ? AND user_id = ? RETURNING *`;
+  const sql = `UPDATE notes SET ${setClauses.join(', ')} WHERE id = ? AND user_id = ? RETURNING *`;
   const row = get<NoteRow>(sql, params);
 
   return row ? toNote(row) : null;
@@ -128,9 +127,6 @@ export async function setNotePublic(
 
 export async function getNoteByPublicSlug(slug: string): Promise<Note | null> {
   // Public read path: intentionally not scoped by user_id
-  const row = get<NoteRow>(
-    `SELECT * FROM notes WHERE public_slug = ? AND is_public = 1`,
-    [slug],
-  );
+  const row = get<NoteRow>(`SELECT * FROM notes WHERE public_slug = ? AND is_public = 1`, [slug]);
   return row ? toNote(row) : null;
 }

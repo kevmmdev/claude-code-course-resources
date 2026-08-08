@@ -12,6 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 Building a **Note-Taking Web App** with:
+
 - Authenticated users (email/password via better-auth)
 - Rich text editing with TipTap (bold, italic, headings, code, lists, horizontal rules)
 - Note CRUD operations (create, read, update, delete)
@@ -46,6 +47,7 @@ This follows Next.js 16 App Router best practices:
 ### Frontend & Backend (Single Next.js Process)
 
 **Presentation Layer** (`app/`)
+
 - Server components by default (for data fetching)
 - Client components (`use client`) only for interactivity (TipTap editor, toggles, forms)
 - TailwindCSS for styling
@@ -57,23 +59,28 @@ This follows Next.js 16 App Router best practices:
   - `/p/[slug]` – public note viewer
 
 **Data Access Layer** (`lib/`)
+
 - `db.ts` – Bun SQLite initialization and query helpers
 - `notes.ts` – Note repository functions (CRUD, sharing logic)
 - `auth.ts` – better-auth configuration
 
 **Server Actions** (`lib/actions/`)
+
 - Form mutations use `'use server'` server actions (not POST routes)
 - Authentication verified server-side before mutations
 
 **API Routes** (`app/api/`)
+
 - Only `/api/auth/[...all]` for better-auth OAuth/credential handling
 - No custom JSON APIs—use server actions for mutations
 
 ### Database (SQLite)
 
 Single `data/app.db` file with:
+
 - **better-auth tables**: `user`, `session`, `account`, `verification` (managed by better-auth)
 - **notes table**:
+
   ```sql
   CREATE TABLE notes (
     id TEXT PRIMARY KEY,
@@ -87,6 +94,7 @@ Single `data/app.db` file with:
     FOREIGN KEY (user_id) REFERENCES user(id)
   );
   ```
+
   - **Indexes**: `idx_notes_user_id`, `idx_notes_public_slug`, `idx_notes_is_public`
 
 **Authorization**: Every note query filters by `user_id` to prevent cross-user access.
@@ -119,6 +127,7 @@ Single `data/app.db` file with:
 ### Database Queries
 
 Helper functions in `lib/db.ts` provide type-safe access:
+
 ```typescript
 query<T>(sql: string, params?: any[]): T[]
 get<T>(sql: string, params?: any[]): T | undefined
@@ -126,11 +135,11 @@ run(sql: string, params?: any[]): void
 ```
 
 Example:
+
 ```typescript
-const notes = query<Note>(
-  'SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC',
-  [userId]
-);
+const notes = query<Note>('SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC', [
+  userId,
+]);
 ```
 
 ### Security
@@ -192,6 +201,7 @@ SPEC.MD                          # Technical specification
 ## Documentation Reference
 
 Consult official docs for up-to-date information:
+
 - Next.js: https://nextjs.org/docs
 - TipTap: https://tiptap.dev/docs
 - better-auth: https://better-auth.com

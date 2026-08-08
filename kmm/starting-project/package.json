@@ -7,6 +7,7 @@
     "build": "bun run --bun next build",
     "start": "bun run --bun next start",
     "lint": "eslint",
+    "format": "oxfmt",
     "db:migrate": "auth migrate"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "oxfmt": "^0.26.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
