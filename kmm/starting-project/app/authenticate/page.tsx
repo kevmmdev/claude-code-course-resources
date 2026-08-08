@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 
 type FormMode = "signin" | "signup";
 
-export default function AuthenticatePage() {
+function AuthenticateForm() {
   const router = useRouter();
-  const [mode, setMode] = useState<FormMode>("signin");
+  const searchParams = useSearchParams();
+  const mode: FormMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setError("");
+  }, [mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,32 +121,34 @@ export default function AuthenticatePage() {
           {mode === "signin" ? (
             <>
               Don&apos;t have an account?{" "}
-              <button
-                onClick={() => {
-                  setMode("signup");
-                  setError("");
-                }}
+              <Link
+                href="/authenticate?mode=signup"
                 className="font-medium text-blue-600 hover:text-blue-700"
               >
                 Sign up
-              </button>
+              </Link>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button
-                onClick={() => {
-                  setMode("signin");
-                  setError("");
-                }}
+              <Link
+                href="/authenticate?mode=signin"
                 className="font-medium text-blue-600 hover:text-blue-700"
               >
                 Sign in
-              </button>
+              </Link>
             </>
           )}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuthenticatePage() {
+  return (
+    <Suspense>
+      <AuthenticateForm />
+    </Suspense>
   );
 }
