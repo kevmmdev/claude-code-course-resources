@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getNoteByPublicSlug } from "@/lib/notes";
+import { parseNoteContent } from "@/lib/tiptap";
+import { PublicNoteViewer } from "@/components/PublicNoteViewer";
 
 interface PublicNotePageProps {
   params: Promise<{
@@ -15,6 +17,8 @@ export default async function PublicNotePage({ params }: PublicNotePageProps) {
   if (!note) {
     notFound();
   }
+
+  const content = parseNoteContent(note.contentJson);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,11 +35,7 @@ export default async function PublicNotePage({ params }: PublicNotePageProps) {
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="rounded-md border border-gray-200 bg-white p-6">
-          <div className="prose max-w-none">
-            <pre className="overflow-auto rounded-md bg-gray-100 p-4 text-sm">
-              {note.contentJson}
-            </pre>
-          </div>
+          <PublicNoteViewer content={content} />
         </div>
       </main>
     </div>

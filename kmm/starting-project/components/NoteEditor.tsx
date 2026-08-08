@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { JSONContent } from "@tiptap/react";
 import type { Note } from "@/lib/notes";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { parseNoteContent } from "@/lib/tiptap";
 import {
   updateNoteAction,
   deleteNoteAction,
@@ -19,13 +20,7 @@ interface NoteEditorProps {
 export function NoteEditor({ note }: NoteEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(note.title);
-  const [content, setContent] = useState<JSONContent>(() => {
-    try {
-      return JSON.parse(note.contentJson);
-    } catch {
-      return { type: "doc", content: [] };
-    }
-  });
+  const [content, setContent] = useState<JSONContent>(() => parseNoteContent(note.contentJson));
   const [isPublic, setIsPublic] = useState(note.isPublic);
   const [saving, setSaving] = useState(false);
   const [sharing, setSharing] = useState(false);
