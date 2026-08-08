@@ -3,13 +3,14 @@ import Link from "next/link";
 import { getNoteByPublicSlug } from "@/lib/notes";
 
 interface PublicNotePageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function PublicNotePage({ params }: PublicNotePageProps) {
-  const note = await getNoteByPublicSlug(params.slug);
+  const { slug } = await params;
+  const note = await getNoteByPublicSlug(slug);
 
   if (!note) {
     notFound();
