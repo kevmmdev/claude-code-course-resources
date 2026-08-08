@@ -72,7 +72,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
       <header className="border-b bg-white">
         <div className="mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">
+            <Link href={`/notes/${note.id}`} className="text-blue-600 hover:text-blue-700">
               ← Back
             </Link>
             <h1 className="flex-1 text-xl font-bold">Edit Note</h1>
