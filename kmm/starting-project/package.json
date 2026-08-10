@@ -8,7 +8,9 @@
     "start": "bun run --bun next start",
     "lint": "eslint",
     "format": "oxfmt",
-    "db:migrate": "auth migrate"
+    "db:migrate": "auth migrate",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@tiptap/pm": "^3.29.2",
@@ -31,7 +33,8 @@
     "eslint-config-next": "16.1.1",
     "oxfmt": "^0.26.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   },
   "ignoreScripts": [
     "sharp",
