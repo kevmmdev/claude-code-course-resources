@@ -25,7 +25,7 @@ export default async function PublicNotePage({ params }: PublicNotePageProps) {
       <header className='border-b bg-white'>
         <div className='mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8'>
           <div className='flex items-center gap-4'>
-            <Link href='/' className='text-blue-600 hover:text-blue-700'>
+            <Link href='/' className='text-purple-700 hover:text-purple-800'>
               ← Home
             </Link>
             <h1 className='flex-1 text-xl font-bold'>{note.title}</h1>
