@@ -1,0 +1,83 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import type { JSONContent } from '@tiptap/react';
+import { RichTextEditor } from '@/components/RichTextEditor';
+import { PageContainer } from '@/components/PageContainer';
+import { createNoteWithContentAction } from '@/lib/actions/notes';
+
+export function NewNoteForm() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState<JSONContent>({ type: 'doc', content: [] });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await createNoteWithContentAction({
+        title: title || undefined,
+        contentJson: JSON.stringify(content),
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create note');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className='min-h-screen bg-gray-50'>
+      <header className='border-b bg-white'>
+        <PageContainer className='py-4'>
+          <div className='flex items-center gap-4'>
+            <Link href='/dashboard' className='text-purple-700 hover:text-purple-800'>
+              ← Back
+            </Link>
+            <h1 className='flex-1 text-xl font-bold'>New Note</h1>
+          </div>
+        </PageContainer>
+      </header>
+
+      <PageContainer as='main' className='py-8'>
+        <form
+          onSubmit={handleSubmit}
+          className='space-y-6 rounded-md border border-gray-200 bg-white p-6'
+        >
+          {error && <div className='rounded-md bg-red-50 p-4 text-sm text-red-800'>{error}</div>}
+
+          <div>
+            <label htmlFor='title' className='block text-sm font-medium'>
+              Title
+            </label>
+            <input
+              id='title'
+              type='text'
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder='Untitled note'
+              className='mt-2 block w-full rounded-md border border-gray-300 px-3 py-2'
+            />
+          </div>
+
+          <div>
+            <label className='block text-sm font-medium'>Content</label>
+            <div className='mt-2'>
+              <RichTextEditor onChange={setContent} />
+            </div>
+          </div>
+
+          <button
+            type='submit'
+            disabled={loading}
+            className='rounded-md bg-purple-700 px-4 py-2 text-white hover:bg-purple-800 disabled:bg-gray-400'
+          >
+            {loading ? 'Creating...' : 'Create note'}
+          </button>
+        </form>
+      </PageContainer>
+    </div>
+  );
+}

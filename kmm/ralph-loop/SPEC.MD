@@ -122,20 +122,11 @@ Users can toggle note "public sharing":
 
 ### 5.1 Tables
 
-#### Better Auth Core Tables
+#### better-auth Core Tables
 
-The following tables are automatically created and managed by the better-auth library. Use the better-auth CLI to initialize or migrate the schema:
+better-auth manages its own tables for authentication. The following tables are required by better-auth:
 
-```bash
-# Generate or migrate the database schema
-bunx --bun auth@latest generate
-# or
-bunx --bun auth@latest migrate
-```
-
-##### user
-
-Stores user account information. Created and managed by better-auth.
+**user**
 
 ```sql
 CREATE TABLE user (
@@ -154,14 +145,12 @@ CREATE TABLE user (
 | id | TEXT | Unique identifier for each user (primary key) |
 | name | TEXT | User's chosen display name |
 | email | TEXT | User's email address for communication and login |
-| emailVerified | INTEGER | Whether the user's email is verified (0 = no, 1 = yes) |
-| image | TEXT | User's profile image URL (optional) |
-| createdAt | TEXT | Timestamp of account creation (ISO 8601 format) |
-| updatedAt | TEXT | Timestamp of last user information update (ISO 8601 format) |
+| emailVerified | INTEGER | Whether the user's email is verified (0 or 1) |
+| image | TEXT | User's image URL (optional) |
+| createdAt | TEXT | Timestamp of when the user account was created |
+| updatedAt | TEXT | Timestamp of the last update to the user's information |
 
-##### session
-
-Stores active user sessions and authentication tokens. Automatically managed by better-auth based on session configuration.
+**session**
 
 ```sql
 CREATE TABLE session (
@@ -173,24 +162,22 @@ CREATE TABLE session (
   userAgent TEXT,
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+  FOREIGN KEY (userId) REFERENCES user(id)
 );
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
 | id | TEXT | Unique identifier for each session (primary key) |
-| userId | TEXT | User ID linked to this session (foreign key) |
-| token | TEXT | Unique session token used for authentication |
-| expiresAt | TEXT | ISO 8601 timestamp when the session expires |
-| ipAddress | TEXT | IP address of the client (optional, for audit/security) |
-| userAgent | TEXT | User agent of the browser/client (optional, for device tracking) |
-| createdAt | TEXT | Timestamp of session creation (ISO 8601 format) |
-| updatedAt | TEXT | Timestamp of last session activity (ISO 8601 format) |
+| userId | TEXT | The ID of the user (foreign key) |
+| token | TEXT | The unique session token |
+| expiresAt | TEXT | The time when the session expires |
+| ipAddress | TEXT | The IP address of the device (optional) |
+| userAgent | TEXT | The user agent information of the device (optional) |
+| createdAt | TEXT | Timestamp of when the session was created |
+| updatedAt | TEXT | Timestamp of when the session was updated |
 
-##### account
-
-Stores authentication provider information (credentials, OAuth tokens, etc.). Managed by better-auth for multi-provider support.
+**account**
 
 ```sql
 CREATE TABLE account (
@@ -207,29 +194,27 @@ CREATE TABLE account (
   password TEXT,
   createdAt TEXT NOT NULL DEFAULT (datetime('now')),
   updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+  FOREIGN KEY (userId) REFERENCES user(id)
 );
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | TEXT | Unique identifier for each account record (primary key) |
-| userId | TEXT | User ID this account belongs to (foreign key) |
-| accountId | TEXT | Provider-specific account ID (or userId for credential providers) |
-| providerId | TEXT | Authentication provider ID (e.g., "credential", "google", "github") |
-| accessToken | TEXT | OAuth access token from provider (optional) |
-| refreshToken | TEXT | OAuth refresh token from provider (optional) |
-| accessTokenExpiresAt | TEXT | ISO 8601 expiry time for access token (optional) |
-| refreshTokenExpiresAt | TEXT | ISO 8601 expiry time for refresh token (optional) |
-| scope | TEXT | OAuth scopes granted by provider (optional, comma/space-separated) |
-| idToken | TEXT | OpenID Connect ID token from provider (optional) |
-| password | TEXT | Hashed password for credential provider authentication (optional) |
-| createdAt | TEXT | Timestamp of account linking (ISO 8601 format) |
-| updatedAt | TEXT | Timestamp of last account update (ISO 8601 format) |
+| id | TEXT | Unique identifier for each account (primary key) |
+| userId | TEXT | The ID of the user (foreign key) |
+| accountId | TEXT | The ID of the account as provided by SSO or equal to userId for credential accounts |
+| providerId | TEXT | The ID of the provider (e.g., "credential", "google", "github") |
+| accessToken | TEXT | The access token returned by the provider (optional) |
+| refreshToken | TEXT | The refresh token returned by the provider (optional) |
+| accessTokenExpiresAt | TEXT | The time when the access token expires (optional) |
+| refreshTokenExpiresAt | TEXT | The time when the refresh token expires (optional) |
+| scope | TEXT | The scope of the account returned by the provider (optional) |
+| idToken | TEXT | The ID token returned from the provider (optional) |
+| password | TEXT | The hashed password for email/password authentication (optional) |
+| createdAt | TEXT | Timestamp of when the account was created |
+| updatedAt | TEXT | Timestamp of when the account was updated |
 
-##### verification
-
-Stores verification requests (email verification, password reset tokens, etc.). Used internally by better-auth for verification flows.
+**verification**
 
 ```sql
 CREATE TABLE verification (
@@ -244,75 +229,35 @@ CREATE TABLE verification (
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | TEXT | Unique identifier for this verification request (primary key) |
-| identifier | TEXT | Context identifier (e.g., user email, user ID) |
-| value | TEXT | The verification value (e.g., OTP code, reset token) |
-| expiresAt | TEXT | ISO 8601 timestamp when this verification expires |
-| createdAt | TEXT | Timestamp of verification request creation (ISO 8601 format) |
-| updatedAt | TEXT | Timestamp of last verification update (ISO 8601 format) |
-
-#### Database Initialization
-
-**SQLite Setup with Bun:**
-
-Initialize better-auth with Bun's built-in SQLite module in your auth configuration file (e.g., `lib/auth.ts`):
-
-```typescript
-import { betterAuth } from "better-auth";
-import { Database } from "bun:sqlite";
-
-export const auth = betterAuth({
-  database: new Database("data/app.db"),
-  // ... rest of better-auth config
-});
-```
-
-**Running CLI Commands:**
-
-When using Bun, prefix auth CLI commands with `bunx --bun` to avoid TypeScript resolution issues:
-
-```bash
-bunx --bun auth@latest generate  # Generate schema
-bunx --bun auth@latest migrate   # Run migrations
-```
+| id | TEXT | Unique identifier for each verification (primary key) |
+| identifier | TEXT | The identifier for the verification request |
+| value | TEXT | The value to be verified |
+| expiresAt | TEXT | The time when the verification request expires |
+| createdAt | TEXT | Timestamp of when the verification request was created |
+| updatedAt | TEXT | Timestamp of when the verification request was updated |
 
 #### notes
-
-Application-specific table for storing notes created by authenticated users.
 
 ```sql
 CREATE TABLE notes (
   id TEXT PRIMARY KEY,
-  userId TEXT NOT NULL,
+  user_id TEXT NOT NULL,
   title TEXT NOT NULL,
-  contentJson TEXT NOT NULL,
-  isPublic INTEGER NOT NULL DEFAULT 0,
-  publicSlug TEXT UNIQUE,
-  createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-  updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+  content_json TEXT NOT NULL,
+  is_public INTEGER NOT NULL DEFAULT 0,
+  public_slug TEXT UNIQUE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES user(id)
 );
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| id | TEXT | Unique identifier for the note (primary key) |
-| userId | TEXT | User ID who owns this note (foreign key) |
-| title | TEXT | Note title |
-| contentJson | TEXT | Note content as serialized TipTap JSON document |
-| isPublic | INTEGER | Whether the note is publicly shared (0 = private, 1 = public) |
-| publicSlug | TEXT | Unique slug for public access via `/p/{slug}` (optional, only if public) |
-| createdAt | TEXT | Timestamp of note creation (ISO 8601 format) |
-| updatedAt | TEXT | Timestamp of last note update (ISO 8601 format) |
-
 ### 5.2 Indexes
 
-Create indexes for query performance:
-
 ```sql
-CREATE INDEX idx_notes_userId ON notes(userId);
-CREATE INDEX idx_notes_publicSlug ON notes(publicSlug);
-CREATE INDEX idx_notes_isPublic ON notes(isPublic);
+CREATE INDEX idx_notes_user_id ON notes(user_id);
+CREATE INDEX idx_notes_public_slug ON notes(public_slug);
+CREATE INDEX idx_notes_is_public ON notes(is_public);
 ```
 
 ## 6. Backend: DB & API Layer
@@ -321,27 +266,17 @@ CREATE INDEX idx_notes_isPublic ON notes(isPublic);
 
 **File:** `lib/db.ts`
 
-Initialize a Bun SQLite client for database operations:
-
-```typescript
-import { Database } from "bun:sqlite";
-
-export const db = new Database("data/app.db");
-```
-
-Export helper functions:
-
-- `query<T>(sql: string, params?: any[]): T[]` — Executes SELECT and returns all rows
-- `get<T>(sql: string, params?: any[]): T | undefined` — Executes SELECT and returns first row
-- `run(sql: string, params?: any[]): void` — Executes INSERT/UPDATE/DELETE
-
-**Note:** Use parameterized queries with `?` placeholders to prevent SQL injection.
+- Initialize Bun SQLite client with DB file (`app.db`)
+- Export helper functions such as:
+  - `getDb()` – returns singleton DB connection
+  - Utility wrappers for:
+    - `query<T>(sql, params?): T[]`
+    - `get<T>(sql, params?): T | undefined`
+    - `run(sql, params?)`
 
 ### 6.2 Note Repository Functions
 
 **File:** `lib/notes.ts`
-
-Provides typed functions for note operations, mapping database rows to TypeScript types.
 
 **TypeScript types:**
 
@@ -350,7 +285,7 @@ export type Note = {
   id: string;
   userId: string;
   title: string;
-  contentJson: string; // serialized TipTap JSON document
+  contentJson: string; // stringified TipTap doc
   isPublic: boolean;
   publicSlug: string | null;
   createdAt: string;
@@ -360,15 +295,15 @@ export type Note = {
 
 **Repository functions:**
 
-- `createNote(userId: string, data?: { title?: string; contentJson?: string }): Promise<Note>` — Creates a new note with optional title and content. Auto-generates ID and timestamps.
-- `getNoteById(userId: string, noteId: string): Promise<Note | null>` — Fetches a single note (verifies ownership via userId).
-- `getNotesByUser(userId: string): Promise<Note[]>` — Lists all notes owned by the user, sorted by updatedAt descending.
-- `updateNote(userId: string, noteId: string, data: Partial<{ title: string; contentJson: string }>): Promise<Note | null>` — Updates title and/or content. Auto-updates `updatedAt`.
-- `deleteNote(userId: string, noteId: string): Promise<void>` — Hard-deletes a note by ID.
-- `setNotePublic(userId: string, noteId: string, isPublic: boolean): Promise<Note | null>` — Toggles public sharing. Generates random `publicSlug` when enabling, clears it when disabling.
-- `getNoteByPublicSlug(slug: string): Promise<Note | null>` — Fetches a public note by slug (no authentication required; only returns if `isPublic = 1`).
+- `createNote(userId: string, data: { title?: string; contentJson?: string }): Promise<Note>`
+- `getNoteById(userId: string, noteId: string): Promise<Note | null>`
+- `getNotesByUser(userId: string): Promise<Note[]>`
+- `updateNote(userId: string, noteId: string, data: Partial<{ title: string; contentJson: string }>): Promise<Note | null>`
+- `deleteNote(userId: string, noteId: string): Promise<void>`
+- `setNotePublic(userId: string, noteId: string, isPublic: boolean): Promise<Note | null>`
+- `getNoteByPublicSlug(slug: string): Promise<Note | null>`
 
-**Security note:** All functions enforce `userId = ?` in SQL WHERE clauses to prevent cross-user access.
+Each function enforces `user_id = ?` in SQL where applicable, to avoid cross-user access.
 
 ## 7. API Design (Next.js Route Handlers)
 
@@ -454,7 +389,7 @@ Optionally omit `contentJson` for list for performance.
 
 #### POST /api/notes/:id/share
 
-**Description:** Toggle public sharing on/off.
+**Description:** Toggle public sharing.
 
 **Request body:**
 ```json
@@ -464,16 +399,15 @@ Optionally omit `contentJson` for list for performance.
 ```
 
 **Behavior:**
-- If `isPublic = true` and `publicSlug` is null, generate a random slug (16+ chars, e.g., using `nanoid()`)
-- If `isPublic = false`, set `isPublic = 0` and `publicSlug = NULL`
-- Auto-update `updatedAt` timestamp
+- If `isPublic = true` and note has no `public_slug`, generate new slug (`nanoid()`)
+- If `isPublic = false`, set `is_public = 0` and `public_slug = NULL`
 
 **Response 200:**
 ```json
 {
   "id": "note-id",
   "isPublic": true,
-  "publicSlug": "abcdef1234ghijkl"
+  "publicSlug": "abcdef1234"
 }
 ```
 
@@ -481,22 +415,19 @@ Optionally omit `contentJson` for list for performance.
 
 #### GET /api/public-notes/:slug
 
-**Description:** Read-only access to public notes via slug. No authentication required.
+**Description:** Read-only access to public notes.
 
 **Response 200:**
 ```json
 {
-  "id": "note-id",
-  "title": "Public Note Title",
-  "contentJson": { "type": "doc", "content": [...] }
+  "title": "Public note",
+  "contentJson": { ... }
 }
 ```
 
-**Response 404:**
-- If slug not found
-- If note exists but `isPublic = 0` (private)
+- 404 if slug not found or `is_public = 0`
 
-**Note:** Alternatively, skip this endpoint and resolve notes directly in the `/p/[slug]` route using Next.js server components with `db.get()`.
+(Or skip this API and just resolve directly in the `/p/[slug]` route using server components.)
 
 ## 8. Frontend – Pages & Components
 
