@@ -107,7 +107,7 @@ function AuthenticateForm() {
           <button
             type='submit'
             disabled={loading}
-            className='w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400'
+            className='w-full rounded-md bg-purple-700 px-4 py-2 text-white hover:bg-purple-800 disabled:bg-gray-400'
           >
             {loading ? 'Loading...' : mode === 'signin' ? 'Sign in' : 'Sign up'}
           </button>
@@ -119,7 +119,7 @@ function AuthenticateForm() {
               Don&apos;t have an account?{' '}
               <Link
                 href='/authenticate?mode=signup'
-                className='font-medium text-blue-600 hover:text-blue-700'
+                className='font-medium text-purple-700 hover:text-purple-800'
               >
                 Sign up
               </Link>
@@ -129,7 +129,7 @@ function AuthenticateForm() {
               Already have an account?{' '}
               <Link
                 href='/authenticate?mode=signin'
-                className='font-medium text-blue-600 hover:text-blue-700'
+                className='font-medium text-purple-700 hover:text-purple-800'
               >
                 Sign in
               </Link>

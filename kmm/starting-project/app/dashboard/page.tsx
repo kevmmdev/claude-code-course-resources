@@ -24,7 +24,7 @@ export default async function DashboardPage() {
         <div className='mb-8'>
           <Link
             href='/notes/new'
-            className='inline-block rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
+            className='inline-block rounded-md bg-purple-700 px-4 py-2 text-white hover:bg-purple-800'
           >
             New note
           </Link>

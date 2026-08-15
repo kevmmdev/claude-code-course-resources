@@ -35,7 +35,7 @@ export function RichTextEditor({ initialContent, onChange }: RichTextEditorProps
 function Toolbar({ editor }: { editor: Editor }) {
   const buttonClass = (active: boolean) =>
     `rounded-md px-2 py-1 text-sm ${
-      active ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+      active ? 'bg-purple-700 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
     }`;
 
   return (

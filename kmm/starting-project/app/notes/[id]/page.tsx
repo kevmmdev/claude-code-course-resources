@@ -33,7 +33,7 @@ export default async function NoteViewPage({ params }: NoteViewPageProps) {
       <header className='border-b bg-white'>
         <div className='mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8'>
           <div className='flex items-center gap-4'>
-            <Link href='/dashboard' className='text-blue-600 hover:text-blue-700'>
+            <Link href='/dashboard' className='text-purple-700 hover:text-purple-800'>
               ← Back
             </Link>
             <div className='flex-1'>
@@ -46,7 +46,7 @@ export default async function NoteViewPage({ params }: NoteViewPageProps) {
             )}
             <Link
               href={`/notes/${note.id}/edit`}
-              className='rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
+              className='rounded-md bg-purple-700 px-4 py-2 text-white hover:bg-purple-800'
             >
               Edit
             </Link>
