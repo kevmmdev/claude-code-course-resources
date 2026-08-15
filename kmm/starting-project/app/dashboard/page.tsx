@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import { getNotesByUser } from '@/lib/notes';
+import { PageContainer } from '@/components/PageContainer';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -15,12 +16,12 @@ export default async function DashboardPage() {
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='border-b bg-white'>
-        <div className='mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8'>
+        <PageContainer className='py-6'>
           <h1 className='text-3xl font-bold'>Notes</h1>
-        </div>
+        </PageContainer>
       </header>
 
-      <main className='mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8'>
+      <PageContainer as='main' className='py-8'>
         <div className='mb-8'>
           <Link
             href='/notes/new'
@@ -57,7 +58,7 @@ export default async function DashboardPage() {
             ))}
           </div>
         )}
-      </main>
+      </PageContainer>
     </div>
   );
 }

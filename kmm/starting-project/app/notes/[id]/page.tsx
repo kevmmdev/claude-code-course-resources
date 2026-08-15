@@ -5,6 +5,7 @@ import { getNoteById } from '@/lib/notes';
 import { parseNoteContent } from '@/lib/tiptap';
 import { NoteContentRenderer } from '@/components/NoteContentRenderer';
 import { DeleteNoteButton } from '@/components/DeleteNoteButton';
+import { PageContainer } from '@/components/PageContainer';
 
 interface NoteViewPageProps {
   params: Promise<{
@@ -31,7 +32,7 @@ export default async function NoteViewPage({ params }: NoteViewPageProps) {
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='border-b bg-white'>
-        <div className='mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8'>
+        <PageContainer className='py-4'>
           <div className='flex items-center gap-4'>
             <Link href='/dashboard' className='text-purple-700 hover:text-purple-800'>
               ← Back
@@ -52,14 +53,14 @@ export default async function NoteViewPage({ params }: NoteViewPageProps) {
             </Link>
             <DeleteNoteButton noteId={note.id} />
           </div>
-        </div>
+        </PageContainer>
       </header>
 
-      <main className='mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8'>
+      <PageContainer as='main' className='py-8'>
         <div className='rounded-md border border-gray-200 bg-white p-6'>
           <NoteContentRenderer content={content} />
         </div>
-      </main>
+      </PageContainer>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { JSONContent } from '@tiptap/react';
 import type { Note } from '@/lib/notes';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { PageContainer } from '@/components/PageContainer';
 import { parseNoteContent } from '@/lib/tiptap';
 import { updateNoteAction, deleteNoteAction, toggleShareAction } from '@/lib/actions/notes';
 
@@ -84,17 +85,17 @@ export function NoteEditor({ note }: NoteEditorProps) {
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='border-b bg-white'>
-        <div className='mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8'>
+        <PageContainer className='py-4'>
           <div className='flex items-center gap-4'>
             <Link href={`/notes/${note.id}`} className='text-purple-700 hover:text-purple-800'>
               ← Back
             </Link>
             <h1 className='flex-1 text-xl font-bold'>Edit Note</h1>
           </div>
-        </div>
+        </PageContainer>
       </header>
 
-      <main className='mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8'>
+      <PageContainer as='main' className='py-8'>
         <div className='space-y-6 rounded-md border border-gray-200 bg-white p-6'>
           <div>
             <label className='block text-sm font-medium'>Title</label>
@@ -146,7 +147,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
             </div>
           )}
         </div>
-      </main>
+      </PageContainer>
 
       {showShareConfirm && (
         <>

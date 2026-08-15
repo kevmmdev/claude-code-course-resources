@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { JSONContent } from '@tiptap/react';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { PageContainer } from '@/components/PageContainer';
 import { createNoteWithContentAction } from '@/lib/actions/notes';
 
 export function NewNoteForm() {
@@ -30,17 +31,17 @@ export function NewNoteForm() {
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='border-b bg-white'>
-        <div className='mx-auto max-w-4xl px-4 py-4 sm:px-6 lg:px-8'>
+        <PageContainer className='py-4'>
           <div className='flex items-center gap-4'>
             <Link href='/dashboard' className='text-purple-700 hover:text-purple-800'>
               ← Back
             </Link>
             <h1 className='flex-1 text-xl font-bold'>New Note</h1>
           </div>
-        </div>
+        </PageContainer>
       </header>
 
-      <main className='mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8'>
+      <PageContainer as='main' className='py-8'>
         <form
           onSubmit={handleSubmit}
           className='space-y-6 rounded-md border border-gray-200 bg-white p-6'
@@ -76,7 +77,7 @@ export function NewNoteForm() {
             {loading ? 'Creating...' : 'Create note'}
           </button>
         </form>
-      </main>
+      </PageContainer>
     </div>
   );
 }
