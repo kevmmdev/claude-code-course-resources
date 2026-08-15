@@ -20,6 +20,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
   const [isPublic, setIsPublic] = useState(note.isPublic);
   const [saving, setSaving] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [showShareConfirm, setShowShareConfirm] = useState(false);
   const [publicUrl, setPublicUrl] = useState<string | null>(
     note.isPublic ? `/p/${note.publicSlug}` : null,
   );
@@ -36,7 +37,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
     }
   };
 
-  const handleToggleShare = async () => {
+  const performToggleShare = async () => {
     setSharing(true);
     try {
       const updated = await toggleShareAction(note.id, !isPublic);
@@ -52,6 +53,23 @@ export function NoteEditor({ note }: NoteEditorProps) {
     } finally {
       setSharing(false);
     }
+  };
+
+  const handleToggleShare = () => {
+    if (isPublic) {
+      performToggleShare();
+    } else {
+      setShowShareConfirm(true);
+    }
+  };
+
+  const handleConfirmShare = () => {
+    setShowShareConfirm(false);
+    performToggleShare();
+  };
+
+  const handleCancelShare = () => {
+    setShowShareConfirm(false);
   };
 
   const handleDelete = async () => {
@@ -129,6 +147,35 @@ export function NoteEditor({ note }: NoteEditorProps) {
           )}
         </div>
       </main>
+
+      {showShareConfirm && (
+        <>
+          <div className='fixed inset-0 bg-black/50' onClick={handleCancelShare} />
+          <div className='fixed left-1/2 top-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-gray-200 bg-white p-6 shadow-lg'>
+            <h2 className='text-lg font-semibold'>Make this note public?</h2>
+            <p className='mt-2 text-gray-600'>
+              Anyone with the link will be able to view this note.
+            </p>
+
+            <div className='mt-6 flex gap-2'>
+              <button
+                onClick={handleCancelShare}
+                disabled={sharing}
+                className='flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmShare}
+                disabled={sharing}
+                className='flex-1 rounded-md bg-purple-700 px-4 py-2 text-white hover:bg-purple-800 disabled:bg-gray-400'
+              >
+                {sharing ? 'Sharing...' : 'Share'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
